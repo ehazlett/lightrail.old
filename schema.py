@@ -7,6 +7,7 @@ LOG_KEY = 'logs:{0}:'.format(settings.APP_NAME) + '{0}'
 NODE_KEY = 'nodes:{0}'
 ROLE_KEY = 'roles:{0}'
 USER_KEY = 'users:{0}'
+HEARTBEAT_KEY = 'heartbeat:{0}'
 
 def user(username=None, first_name=None, last_name=None, email=None, \
     password=None, role=None, enabled=True):

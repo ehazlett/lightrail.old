@@ -44,6 +44,7 @@
           <a class="brand" href="/">{{config['APP_NAME']}}</a>
           <ul class="nav">
             {% if session.role == 'admin' %}
+            <li id="link_nodes"><a href="{{url_for('nodes')}}">nodes</a></li>
             <li id="link_tasks"><a href="{{url_for('tasks')}}">tasks</a></li>
             <li id="link_logs"><a href="{{url_for('logs')}}">logs</a></li>
             {% endif %}

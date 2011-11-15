@@ -248,6 +248,21 @@ def clear_logs():
     flash('Logs cleared...')
     return redirect(url_for('logs'))
 
+@app.route("/nodes/")
+@admin_required
+def nodes():
+    nodes = []
+    node_keys = g.db.keys('{0}'.format(schema.HEARTBEAT_KEY.format('*')))
+    for k in node_keys:
+        data = json.loads(g.db.get(k))
+        node = {}
+        node['name'] = data['node']
+        node['ttl'] = g.db.ttl(k)
+        nodes.append(node)
+    ctx = {
+        'nodes': nodes,
+    }
+    return render_template("nodes.html", **ctx)
 
 # ----- API -----
 @app.route("/api/generateapikey/")
@@ -294,11 +309,10 @@ def toggle_user(active):
     except KeyboardInterrupt:
         pass
 
-def listener():
+def client_listener():
     db = get_db_connection()
     ps = db.pubsub()
-    # remove existing
-    ps.subscribe('client')
+    ps.subscribe(settings.CLIENT_CHANNEL)
     for m in ps.listen():
         print(m)
 
@@ -322,7 +336,7 @@ if __name__=="__main__":
         toggle_user(False)
         sys.exit(0)
     # start pub/sub listener
-    p = Process(target=listener)
+    p = Process(target=client_listener)
     p.start()
     # run app
     app.run(port=int(opts.port), use_reloader=False) # must not use reloader or listener will start twice

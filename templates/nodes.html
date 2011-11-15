@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block page_header %}nodes{% endblock %}
+
+{% block main_content %}
+<div class="row pull-right">
+  <div class="span3 well">
+    <a href="{{url_for('nodes')}}" class="btn info">Refresh</a>
+  </div>
+</div>
+<div class="row">
+  <div class="fill">
+    {% if nodes %}
+    <table id="nodes" class="zebra-striped">
+      <thead>
+        <tr>
+          <th>Node</th>
+          <th>TTL</th>
+        </tr>
+      </thead>
+      {% for node in nodes %}
+      <tr>
+        <td>{{node.name}}</td>
+        <td width="20%">
+          {{node.ttl}}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <div>There are no active nodes.</div>
+    {% endif %}
+  </div>
+</div>
+<script type="text/javascript">
+    // reload page every 5 seconds
+    //setTimeout(reloadPage, 5000);
+  });
+</script>
+{% endblock %}
