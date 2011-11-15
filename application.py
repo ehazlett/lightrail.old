@@ -21,6 +21,7 @@ from datetime import datetime
 from random import Random
 import string
 import redis
+from multiprocessing import Process
 import utils
 from utils import deploy
 from utils.log import log_message
@@ -293,6 +294,14 @@ def toggle_user(active):
     except KeyboardInterrupt:
         pass
 
+def listener():
+    db = get_db_connection()
+    ps = db.pubsub()
+    # remove existing
+    ps.subscribe('client')
+    for m in ps.listen():
+        print(m)
+
 # ----- end management commands -----
 
 if __name__=="__main__":
@@ -312,7 +321,9 @@ if __name__=="__main__":
     if opts.disable_user:
         toggle_user(False)
         sys.exit(0)
+    # start pub/sub listener
+    p = Process(target=listener)
+    p.start()
     # run app
-    app.run(port=int(opts.port))
-
+    app.run(port=int(opts.port), use_reloader=False) # must not use reloader or listener will start twice
 
