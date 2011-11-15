@@ -1,0 +1,5 @@
+*.pyc
+*.log
+*.swp
+local_settings.py
+supervisord.conf

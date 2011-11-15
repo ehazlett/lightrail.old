@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block page_header %}tasks{% endblock %}
+
+{% block main_content %}
+<div class="row pull-right">
+  <div class="span3 well">
+    <a href="#" data-url="{{url_for('delete_all_tasks')}}" class="btn deletealltasks error">Delete All Tasks</a>
+  </div>
+</div>
+<div class="row">
+  <div class="fill">
+    {% if tasks %}
+    <table id="tasks" class="zebra-striped">
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      {% for task in tasks|sort(attribute='date', reverse=True) %}
+      <tr>
+        <td>
+          <dl>
+            <dt>{{task.date|datefromtime}}</dt>
+            <dd>{{task.key}}</dd>
+            <dd>{{task.status}}</dd>
+            {% if task.result %}
+            <dd>{{task.result}}</dd>
+            {% endif %}
+          </dl>
+        </td>
+        <td width="10%">
+          {% if task.status == 'new' %}
+          <span class="label success">New</span>
+          {% elif task.status == 'running' %}
+          <span class="label warning">Running</span>
+          {% else %}
+          <span class="label">Complete</span>
+          {% endif %}
+        </td>
+        <td width="10%"><a class="btn" href="#" data-url="{{url_for('delete_task', task_id=task.key)}}">Delete</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <div>There are no tasks.</div>
+    {% endif %}
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#tasks a.btn").click(function() {
+      if (confirm('Are you sure you want to delete the task?')) {
+        $(location).attr('href', (this).getAttribute('data-url'));
+      }
+    });
+    $("a.btn.deletealltasks").click(function(){
+      if (confirm('Are you sure you want to delete all tasks?')) {
+        $(location).attr('href', (this).getAttribute('data-url'));
+      }
+    });
+  });
+</script>
+{% endblock %}
