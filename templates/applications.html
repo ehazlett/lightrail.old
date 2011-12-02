@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block page_header %}applications{% endblock %}
+
+{% block main_content %}
+<div id="modal-application" class="modal hide">
+  <div class="modal-header">
+    <a href="#" class="close">x</a>
+    <h3>New Application</h3>
+  </div>
+  <div class="modal-body">
+    <form id="form-application" action="{{url_for('create_application')}}" method="POST">
+      <fieldset>
+        <div class="clearfix">
+          <label for="name">Name</label>
+          <div class="input">
+            <input class="name span3 required" id="name" name="name" type="text"/>
+          </div>
+        </div>
+        <div class="clearfix">
+          <label for="description">Description</label>
+          <div class="input">
+            <input class="description span4" id="description" name="description" type="text"/>
+          </div>
+        </div>
+        <div class="actions">
+          <a id="button-create-application" href="#" class="btn primary">Create</a>
+          <a href="#" class="btn secondary" onclick="$('#modal-application').modal('hide');">Cancel</a>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+  <div class="modal-footer">
+  </div>
+</div>
+<div class="row pull-right">
+  <div class="span2 well">
+    <a href="#" class="btn info" data-controls-modal="modal-application" data-backdrop="true" data-keyboard="true" title="Create Application">Create</a>
+  </div>
+</div>
+<div class="row">
+  <div class="fill">
+    {% if applications %}
+    <table class="zebra-striped">
+      <thead>
+        <tr>
+        </tr>
+      </thead>
+     <tbody>
+        
+     </tbody>
+    </table>
+    {% else %}
+    <div>You have not created any applications.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

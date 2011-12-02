@@ -7,6 +7,7 @@ from flask import g
 from flask import render_template
 from flask import redirect, url_for
 from flask import flash
+from flaskext.babel import Babel
 import os
 import uuid
 import logging
@@ -34,6 +35,8 @@ app = Flask(__name__)
 app.debug = settings.DEBUG
 app.logger.setLevel(logging.ERROR)
 app.config.from_object('settings')
+# extensions
+babel = Babel(app)
 
 # ----- filters -----
 @app.template_filter('datefromtime')
@@ -54,12 +57,33 @@ def get_db_connection():
     return redis.Redis(host=app.config['DB_HOST'], port=app.config['DB_PORT'], \
         db=app.config['DB_NAME'], password=app.config['DB_PASSWORD'])
 
+@babel.localeselector
+def get_locale():
+    # if a user is logged in, use the locale from the account
+    if session.has_key('user'):
+        user = json.loads(g.db.get(schema.USER_KEY.format(session['user'])))
+        if user.has_key('locale'):
+            return user['locale']
+    # otherwise try to guess the language from the user accept
+    # header the browser sends
+    return request.accept_languages.best_match([x[0] for x in app.config['LOCALES']])
+
 @app.route("/")
 def index():
     if 'auth_token' in session:
         return render_template("index.html")
     else:
         return redirect(url_for('about'))
+
+@app.route("/applications/")
+@login_required
+def applications():
+    return render_template("applications.html")
+
+@app.route("/applications/create/", methods=['POST'])
+@login_required
+def create_application():
+    return redirect(url_for('applications'))
 
 @app.route("/about/")
 def about():
@@ -114,6 +138,7 @@ def account():
         if request.method == 'GET':
             ctx = {
                 'account': account,
+                'locales': app.config['LOCALES'],
             }
             return render_template('account.html', **ctx)
         else:
@@ -258,6 +283,7 @@ def nodes():
         node = {}
         node['name'] = data['node']
         node['ttl'] = g.db.ttl(k)
+        node['load'] = data['load']
         nodes.append(node)
     ctx = {
         'nodes': nodes,
@@ -335,9 +361,6 @@ if __name__=="__main__":
     if opts.disable_user:
         toggle_user(False)
         sys.exit(0)
-    # start pub/sub listener
-    p = Process(target=client_listener)
-    p.start()
     # run app
-    app.run(port=int(opts.port), use_reloader=False) # must not use reloader or listener will start twice
+    app.run(port=int(opts.port))
 

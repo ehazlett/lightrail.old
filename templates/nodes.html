@@ -14,15 +14,13 @@
       <thead>
         <tr>
           <th>Node</th>
-          <th>TTL</th>
+          <th>Load</th>
         </tr>
       </thead>
       {% for node in nodes %}
       <tr>
         <td>{{node.name}}</td>
-        <td width="20%">
-          {{node.ttl}}
-        </td>
+        <td width="25%">{{node.load}}</td>
       </tr>
       {% endfor %}
     </table>
