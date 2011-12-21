@@ -117,7 +117,12 @@ def get_application_config(app=None):
         raise NameError('You must specify an application')
     db = application.get_db_connection()
     app_key = schema.APP_KEY.format(app, '*')
-    return db.get(app_key)
+    res = db.keys(app_key)
+    if res:
+        app = db.get(res[0])
+    else:
+        app = None
+    return app
 
 def update_application_config(app=None, config={}):
     if not application:
