@@ -7,6 +7,22 @@ body {
 .container > footer p {
   text-align: center; /* center align it with the container */
 }
+footer {
+  width: 100%;
+  margin: 0 auto 0 auto;
+  color: #a1a1a1;
+  text-align: center; /* center align it with the container */
+}
+footer a { 
+  color: #a1a1a1;
+}
+footer a:active {
+  color: #c1c1c1;
+}
+footer a:hover {
+  color: #a1a1a1;
+  text-decoration: none;
+}
 .container {
   width: 960px; /* downsize our container to make the content feel a bit tighter and more cohesive. NOTE: this removes two full columns from the grid, meaning you only go to 14 columns and not 16. */
 }
