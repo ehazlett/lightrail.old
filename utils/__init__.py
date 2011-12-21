@@ -1,5 +1,6 @@
 import hashlib
 from random import Random
+import string
 import schema
 import application
 import settings
@@ -7,6 +8,8 @@ try:
     import simplejson as json
 except ImportError:
     import json
+
+VALID_CHARS = string.letters+string.digits+'-'
 
 def create_user(username=None, email=None, password=None, role=None, enabled=True):
     if not username or not password or not role:
@@ -92,11 +95,28 @@ def get_task(task_id=None):
     task_key = '{0}:{1}'.format(settings.TASK_QUEUE_NAME, task_id)
     return db.get(task_key)
 
+def create_application(name=None, owner=None, **kwargs):
+    if not name or not owner:
+        raise NameError('You must specify a name and owner')
+    # check name for invalid chars
+    for c in name:
+        if c not in VALID_CHARS:
+            raise ValueError('Invalid characters in name')
+    db = application.get_db_connection()
+    if get_application_config(name):
+        raise NameError('An application by that name already exists')
+    app_key = schema.APP_KEY.format(name, owner)
+    app_data = schema.application(name=name, owner=owner)
+    for k,v in kwargs.iteritems():
+        app_data[k] = v
+    db.set(app_key, json.dumps(app_data))
+    return True
+
 def get_application_config(app=None):
     if not application:
         raise NameError('You must specify an application')
     db = application.get_db_connection()
-    app_key = schema.APP_KEY.format(app)
+    app_key = schema.APP_KEY.format(app, '*')
     return db.get(app_key)
 
 def update_application_config(app=None, config={}):

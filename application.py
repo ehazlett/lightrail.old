@@ -89,11 +89,23 @@ def index():
 @app.route("/applications/")
 @login_required
 def applications():
-    return render_template("applications.html")
+    app_keys = g.db.keys(schema.APP_KEY.format('*', session['user']))
+    apps = []
+    [apps.append(json.loads(g.db.get(x))) for x in app_keys]
+    ctx = {
+        'applications': apps,
+    }
+    return render_template("applications.html", **ctx)
 
-@app.route("/applications/create/", methods=['POST'])
+@app.route("/applications/create/", methods=['GET', 'POST'])
 @login_required
 def create_application():
+    try:
+        form = request.form
+        utils.create_application(form['name'], owner=session['user'], \
+            description=form['description'])
+    except Exception, e:
+        flash(e, 'error')
     return redirect(url_for('applications'))
 
 @app.route("/about/")

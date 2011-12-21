@@ -42,10 +42,15 @@
     <table id="applications" class="zebra-striped">
       <thead>
         <tr>
+          <th>{{_('Name')}}</th>
         </tr>
       </thead>
      <tbody>
-        
+        {% for app in applications %}
+        <tr>
+          <td>{{app.name}}</td>
+        </tr>
+        {% endfor %}
      </tbody>
     </table>
     {% else %}
@@ -54,6 +59,13 @@
   </div>
 </div>
 <script type="text/javascript">
+  $("#button-create-application").click(function() {
+    if (validateForm("form-application")) {
+      $("#form-application").submit();
+    } else {
+      return false;
+    }
+  });
   $(function() {
     {% if applications %}
     $("table#applications").tablesorter({ sortList: [[0,0]]});

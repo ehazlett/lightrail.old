@@ -12,7 +12,7 @@ body {
 }
 .alert-message {
   margin: 0 auto 0 auto;
-  width: 980px;
+  z-index: 11000;
 }
 .row {
   zoom: 1;

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block page_header %}tasks{% endblock %}
+{% block page_header %}{{_('tasks')}}{% endblock %}
 {% block page_header_toolbar %}
   <a href="{{url_for('tasks')}}" class="btn">{{_('Refresh')}}</a>
   <a href="#" data-url="{{url_for('delete_all_tasks')}}" class="btn delete-all-tasks error">{{_('Delete All Tasks')}}</a>
@@ -42,7 +42,7 @@
       {% endfor %}
     </table>
     {% else %}
-    <div>There are no tasks.</div>
+    <div class="info">{{_('There are no tasks.')}}</div>
     {% endif %}
   </div>
 </div>

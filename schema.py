@@ -2,12 +2,15 @@
 import time
 import settings
 
-APP_KEY = 'applications:{0}'
+APP_KEY = 'applications:{0}:{1}'
 LOG_KEY = 'logs:{0}:'.format(settings.APP_NAME) + '{0}'
 NODE_KEY = 'nodes:{0}'
 ROLE_KEY = 'roles:{0}'
 USER_KEY = 'users:{0}'
 HEARTBEAT_KEY = 'heartbeat:{0}'
+
+def application(name=None, owner=None):
+    return {'name': name, 'owner': owner }
 
 def user(username=None, first_name=None, last_name=None, email=None, \
     password=None, role=None, enabled=True):
