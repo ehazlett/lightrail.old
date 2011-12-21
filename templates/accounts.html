@@ -1,41 +1,45 @@
 {% extends "base.html" %}
 {% block page_header %}accounts{% endblock %}
+{% block page_header_toolbar %}
+  <a href="#" data-controls-modal="modal-user" data-backdrop="true" data-keyboard="true" class="btn">{{_('New User')}}</a>
+  <a href="#" data-controls-modal="modal-role" data-backdrop="true" data-keyboard="true" class="btn">{{_('New Role')}}</a>
+{% endblock %}
 
 {% block main_content %}
 <div id="modal-user" class="modal hide">
   <div class="modal-header">
     <a href="#" class="close">x</a>
-    <h3>New User</h3>
+    <h3>{{_('New User')}}</h3>
   </div>
   <div class="modal-body">
     <form id="form-user" action="{{url_for('add_user')}}" method="POST">
       <fieldset>
         <div class="clearfix">
-          <label for="username">Username</label>
+          <label for="username">{{_('Username')}}</label>
           <div class="input">
             <input class="username span4 required" id="username" name="username" type="text"/>
           </div>
         </div>
         <div class="clearfix">
-          <label for="email">Email</label>
+          <label for="email">{{_('Email')}}</label>
           <div class="input">
             <input class="email span4 required" id="email" name="email" type="text"/>
           </div>
         </div>
         <div class="clearfix">
-          <label for="password">Password</label>
+          <label for="password">{{_('Password')}}</label>
           <div class="input">
             <input class="password span4 required" id="password" name="password" type="password"/>
           </div>
         </div>
         <div class="clearfix">
-          <label for="password_confirm">Password (confirm)</label>
+          <label for="password_confirm">{{_('Password (confirm)')}}</label>
           <div class="input">
             <input class="password_confirm span4 required" id="password_confirm" name="password_confirm" type="password"/>
           </div>
         </div>
         <div class="clearfix">
-          <label for="role">Role</label>
+          <label for="role">{{_('Role')}}</label>
           <div class="input">
             <select class="medium required" id="role" name="role">
               <option value="">-----</option>
@@ -46,8 +50,8 @@
           </div>
         </div>
         <div class="actions">
-          <a id="button-create-user" href="#" class="btn primary">Create</a>
-          <a href="#" class="btn secondary" onclick="$('#modal-user').modal('hide');">Cancel</a>
+          <a id="button-create-user" href="#" class="btn primary">{{_('Create')}}</a>
+          <a href="#" class="btn secondary" onclick="$('#modal-user').modal('hide');">{{_('Cancel')}}</a>
         </div>
       </fieldset>
     </form>
@@ -55,23 +59,18 @@
   <div class="modal-footer">
   </div>
 </div>
-<h2>Users</h2>
-<div class="row pull-right">
-  <div class="span2 well">
-    <a href="#" data-controls-modal="modal-user" data-backdrop="true" data-keyboard="true" class="btn primary">New User</a>
-  </div>
-</div>
+<h2>{{_('Users')}}</h2>
 <div class="row">
   <div class="fill">
     {% if users %}
     <table id="users" class="zebra-striped">
       <thead>
         <tr>
-          <th>Username</th>
-          <th>Email</th>
-          <th>API Key</th>
-          <th>Active</th>
-          <th>Role</th>
+          <th>{{_('Username')}}</th>
+          <th>{{_('Email')}}</th>
+          <th>{{_('API Key')}}</th>
+          <th>{{_('Active')}}</th>
+          <th>{{_('Role')}}</th>
           <th></th>
         </tr>
       </thead>
@@ -82,21 +81,21 @@
         <td>{{user.apikey}}</td>
         <td width="10%">
           {% if user.enabled %}
-          <span class="label success">Enabled</span>
+          <span class="label success">{{_('Enabled')}}</span>
           {% else %}
-          <span class="label error">Disabled</span>
+          <span class="label error">{{_('Disabled')}}</span>
           {% endif %}
         </td>
         <td width="15%">{{user.role}}</td>
         <td width="25%">
-          <a class="btn toggle" href="#" data-url="{{url_for('toggle_user', username=user.username)}}">{% if user.enabled %}Disable{% else %}Enable{% endif %}</a>
-          <a class="btn delete error" href="#" data-url="{{url_for('delete_user', username=user.username)}}">Delete</a>
+          <a class="btn toggle" href="#" data-url="{{url_for('toggle_user', username=user.username)}}">{% if user.enabled %}Disable{% else %}{{_('Enable')}}{% endif %}</a>
+          <a class="btn delete error" href="#" data-url="{{url_for('delete_user', username=user.username)}}">{{_('Delete')}}</a>
         </td>
       </tr>
       {% endfor %}
     </table>
     {% else %}
-    <div>There are no users.</div>
+    <div>{{_('There are no users.')}}</div>
     {% endif %}
   </div>
 </div>
@@ -104,20 +103,20 @@
 <div id="modal-role" class="modal hide">
   <div class="modal-header">
     <a href="#" class="close">x</a>
-    <h3>New Role</h3>
+    <h3>{{_('New Role')}}</h3>
   </div>
   <div class="modal-body">
     <form id="form-role" action="{{url_for('add_role')}}" method="POST">
       <fieldset>
         <div class="clearfix">
-          <label for="rolename">Name</label>
+          <label for="rolename">{{_('Name')}}</label>
           <div class="input">
             <input class="rolename span4" id="rolename" name="rolename" type="text"/>
           </div>
         </div>
         <div class="actions">
-          <a id="button-create-role" href="#" class="btn primary">Create</a>
-          <a href="#" class="btn secondary" onclick="$('#modal-role').modal('hide');">Cancel</a>
+          <a id="button-create-role" href="#" class="btn primary">{{_('Create')}}</a>
+          <a href="#" class="btn secondary" onclick="$('#modal-role').modal('hide');">{{_('Cancel')}}</a>
         </div>
       </fieldset>
     </form>
@@ -125,31 +124,26 @@
   <div class="modal-footer">
   </div>
 </div>
-<h2>Roles</h2>
-<div class="row pull-right">
-  <div class="span2 well">
-    <a href="#" data-controls-modal="modal-role" data-backdrop="true" data-keyboard="true" class="btn primary">New Role</a>
-  </div>
-</div>
+<h2>{{_('Roles')}}</h2>
 <div class="row">
   <div class="fill">
     {% if roles %}
     <table id="roles" class="zebra-striped">
       <thead>
         <tr>
-          <th>Name</th>
+          <th>{{_('Name')}}</th>
           <th></th>
         </tr>
       </thead>
       {% for role in roles %}
       <tr>
         <td>{{role.rolename}}</td>
-        <td width="10%"><a class="btn error" href="#" data-url="{{url_for('delete_role', rolename=role.rolename)}}">Delete</a></td>
+        <td width="25%"><a class="btn error" href="#" data-url="{{url_for('delete_role', rolename=role.rolename)}}">{{_('Delete')}}</a></td>
       </tr>
       {% endfor %}
     </table>
     {% else %}
-    <div>There are no roles.</div>
+    <div>{{_('There are no roles.')}}</div>
     {% endif %}
   </div>
 </div>
@@ -194,17 +188,17 @@
     });
 
     $("#users a.btn.delete").click(function() {
-      if (confirm('Are you sure you want to delete the user?')) {
+      if (confirm("{{_('Are you sure you want to delete the user?')}}")) {
         $(location).attr('href', (this).getAttribute('data-url'));
       }
     });
     $("#users a.btn.toggle").click(function() {
-      if (confirm('Are you sure you want to enable/disable the user?')) {
+      if (confirm("{{_('Are you sure you want to enable/disable the user?')}}")) {
         $(location).attr('href', (this).getAttribute('data-url'));
       }
     });
     $("#roles a.btn").click(function() {
-      if (confirm('Are you sure you want to delete the role?')) {
+      if (confirm("{{_('Are you sure you want to delete the role?')}}")) {
         $(location).attr('href', (this).getAttribute('data-url'));
       }
     });

@@ -1,30 +1,28 @@
 {% extends "base.html" %}
 {% block page_header %}tasks{% endblock %}
+{% block page_header_toolbar %}
+  <a href="{{url_for('tasks')}}" class="btn">{{_('Refresh')}}</a>
+  <a href="#" data-url="{{url_for('delete_all_tasks')}}" class="btn delete-all-tasks error">{{_('Delete All Tasks')}}</a>
+{% endblock %}
 
 {% block main_content %}
-<div class="row pull-right">
-  <div class="span3 well">
-    <a href="#" data-url="{{url_for('delete_all_tasks')}}" class="btn deletealltasks error">Delete All Tasks</a>
-  </div>
-</div>
 <div class="row">
   <div class="fill">
     {% if tasks %}
     <table id="tasks" class="zebra-striped">
       <thead>
         <tr>
-          <th>Task</th>
-          <th>Status</th>
+          <th>{{_('Date')}}</th>
+          <th>{{_('Task')}}</th>
+          <th>{{_('Status')}}</th>
           <th></th>
         </tr>
       </thead>
       {% for task in tasks|sort(attribute='date', reverse=True) %}
       <tr>
+        <td width="15%">{% if task.date %}{{task.date|date_from_timestamp}}{% endif %}</td>
         <td>
-          <dl>
-            <dt>{{task.date|datefromtime}}</dt>
-            <dd>{{task.key}}</dd>
-            <dd>{{task.status}}</dd>
+            <dd>{{task.task}}</dd>
             {% if task.result %}
             <dd>{{task.result}}</dd>
             {% endif %}
@@ -39,7 +37,7 @@
           <span class="label">Complete</span>
           {% endif %}
         </td>
-        <td width="10%"><a class="btn" href="#" data-url="{{url_for('delete_task', task_id=task.key)}}">Delete</a></td>
+        <td width="10%"><a class="btn" href="#" data-url="{{url_for('delete_task', task_id=task.task_id)}}">Delete</a></td>
       </tr>
       {% endfor %}
     </table>
@@ -50,12 +48,13 @@
 </div>
 <script type="text/javascript">
   $(document).ready(function(){
+    $("#tasks").tablesorter({ sortList: [[0,1]] });
     $("#tasks a.btn").click(function() {
       if (confirm('Are you sure you want to delete the task?')) {
         $(location).attr('href', (this).getAttribute('data-url'));
       }
     });
-    $("a.btn.deletealltasks").click(function(){
+    $("a.btn.delete-all-tasks").click(function(){
       if (confirm('Are you sure you want to delete all tasks?')) {
         $(location).attr('href', (this).getAttribute('data-url'));
       }

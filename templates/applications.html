@@ -1,31 +1,34 @@
 {% extends "base.html" %}
 
-{% block page_header %}applications{% endblock %}
+{% block page_header %}{{_('applications')}}{% endblock %}
+{% block page_header_toolbar %}
+  <a href="#" class="btn info" data-controls-modal="modal-application" data-backdrop="true" data-keyboard="true" title="{{_('Create Application')}}">{{_('Create')}}</a>
+{% endblock %}
 
 {% block main_content %}
 <div id="modal-application" class="modal hide">
   <div class="modal-header">
     <a href="#" class="close">x</a>
-    <h3>New Application</h3>
+    <h3>{{_('New Application')}}</h3>
   </div>
   <div class="modal-body">
     <form id="form-application" action="{{url_for('create_application')}}" method="POST">
       <fieldset>
         <div class="clearfix">
-          <label for="name">Name</label>
+          <label for="name">{{_('Name')}}</label>
           <div class="input">
             <input class="name span3 required" id="name" name="name" type="text"/>
           </div>
         </div>
         <div class="clearfix">
-          <label for="description">Description</label>
+          <label for="description">{{_('Description')}}</label>
           <div class="input">
             <input class="description span4" id="description" name="description" type="text"/>
           </div>
         </div>
         <div class="actions">
-          <a id="button-create-application" href="#" class="btn primary">Create</a>
-          <a href="#" class="btn secondary" onclick="$('#modal-application').modal('hide');">Cancel</a>
+          <a id="button-create-application" href="#" class="btn primary">{{_('Create')}}</a>
+          <a href="#" class="btn secondary" onclick="$('#modal-application').modal('hide');">{{_('Cancel')}}</a>
         </div>
       </fieldset>
     </form>
@@ -33,15 +36,10 @@
   <div class="modal-footer">
   </div>
 </div>
-<div class="row pull-right">
-  <div class="span2 well">
-    <a href="#" class="btn info" data-controls-modal="modal-application" data-backdrop="true" data-keyboard="true" title="Create Application">Create</a>
-  </div>
-</div>
 <div class="row">
   <div class="fill">
     {% if applications %}
-    <table class="zebra-striped">
+    <table id="applications" class="zebra-striped">
       <thead>
         <tr>
         </tr>
@@ -51,9 +49,16 @@
      </tbody>
     </table>
     {% else %}
-    <div>You have not created any applications.</div>
+    <div class="info">{{_('You have not created any applications.')}}</div>
     {% endif %}
   </div>
 </div>
+<script type="text/javascript">
+  $(function() {
+    {% if applications %}
+    $("table#applications").tablesorter({ sortList: [[0,0]]});
+    {% endif %}
+  });
+</script>
 {% endblock %}
 

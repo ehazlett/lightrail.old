@@ -49,3 +49,8 @@ body {
 .topbar {
   color: #b1b1b1;
 }
+div.info {
+  margin-left: 20px;
+  font-size: 18pt;
+  color: #cacaca;
+}

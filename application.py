@@ -8,6 +8,7 @@ from flask import render_template
 from flask import redirect, url_for
 from flask import flash
 from flaskext.babel import Babel
+from flaskext.babel import format_datetime
 import os
 import uuid
 import logging
@@ -24,8 +25,8 @@ import string
 import redis
 from multiprocessing import Process
 import utils
-from utils import deploy
-from utils.log import log_message
+from utils import config
+from utils.log import RedisHandler
 import queue
 import schema
 import messages
@@ -38,10 +39,20 @@ app.config.from_object('settings')
 # extensions
 babel = Babel(app)
 
+# redis handler
+redis_handler = RedisHandler()
+redis_handler.setLevel(logging.DEBUG)
+app.logger.addHandler(redis_handler)
+
+api_log = config.get_logger('api')
+console_log = config.get_logger('console')
+startup_log = config.get_logger('boot')
+log = config.get_logger('webui')
+
 # ----- filters -----
-@app.template_filter('datefromtime')
-def datefromtime_filter(time):
-    return datetime.fromtimestamp(time)
+@app.template_filter('date_from_timestamp')
+def date_from_timestamp(timestamp):
+    return format_datetime(datetime.fromtimestamp(timestamp))
 
 # ----- end filters ----
 

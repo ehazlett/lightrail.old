@@ -21,6 +21,7 @@ LOCALES = (
     ('en', lazy_gettext(u'English')),
     ('fr', lazy_gettext(u'French')),
 )
+LOG_LEVEL = logging.DEBUG
 MASTER_CHANNEL = 'master'
 NODE_NAME = os.uname()[1]
 PROJECT_PATH = os.path.dirname(__file__)
