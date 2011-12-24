@@ -22,7 +22,7 @@
       </thead>
       {% for log in logs %}
       <tr>
-        <td width="15%">{{log.date|date_from_timestamp}}</td>
+        <td width="15%">{{log.date|date_ms_from_timestamp}}</td>
         <td width="10%">
           {% if log.level == 10 %}
           <span class="label">{{_('debug')}}</span>
@@ -37,7 +37,7 @@
           {% endif %}
         </td>
         <td width="20%">{{log.category}}</td>
-        <td>{{log.message}}</td>
+        <td>{{log.message|truncate}}</td>
       </tr>
       {% endfor %}
     </table>

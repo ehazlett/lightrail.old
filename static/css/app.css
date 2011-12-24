@@ -28,6 +28,7 @@ footer a:hover {
 }
 .alert-message {
   margin: 0 auto 0 auto;
+  width: 980px;
   z-index: 11000;
 }
 .row {
@@ -69,4 +70,9 @@ div.info {
   margin-left: 20px;
   font-size: 18pt;
   color: #cacaca;
+}
+#task-result {
+  width: 98%;
+  height: 300px;
+  resize: none;
 }

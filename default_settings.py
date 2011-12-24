@@ -32,6 +32,10 @@ TASK_QUEUE_KEY_TTL = 86400
 # app version
 VERSION = '0.1'
 
+STATIC_DIR = os.path.join(PROJECT_PATH, 'static')
+DEPLOY_WORK_DIR = os.path.join(STATIC_DIR, 'deploy')
+NODE_API_KEY = "mynodekey" # used to connect to terminus nodes via api -- set this as an available api key on the nodes
+
 try:
     from local_settings import *
 except ImportError:

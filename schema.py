@@ -5,9 +5,11 @@ import settings
 APP_KEY = 'applications:{0}:{1}'
 LOG_KEY = 'logs:{0}:'.format(settings.APP_NAME) + '{0}'
 NODE_KEY = 'nodes:{0}'
+NODE_APPS_KEY = '{0}:applications'.format(NODE_KEY)
 ROLE_KEY = 'roles:{0}'
 USER_KEY = 'users:{0}'
 HEARTBEAT_KEY = 'heartbeat:{0}'
+TASK_KEY = '{0}:{1}'.format(settings.TASK_QUEUE_NAME, '{0}')
 
 def application(name=None, owner=None):
     return {'name': name, 'owner': owner }

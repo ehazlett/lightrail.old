@@ -25,6 +25,7 @@ import string
 import redis
 from multiprocessing import Process
 import utils
+from utils import api
 from utils import config
 from utils.log import RedisHandler
 import queue
@@ -53,6 +54,10 @@ log = config.get_logger('webui')
 @app.template_filter('date_from_timestamp')
 def date_from_timestamp(timestamp):
     return format_datetime(datetime.fromtimestamp(timestamp))
+
+@app.template_filter('date_ms_from_timestamp')
+def date_ms_from_timestamp(timestamp):
+    return datetime.fromtimestamp(timestamp).strftime('%b %d, %Y %H:%M:%S.%f')
 
 # ----- end filters ----
 
@@ -157,7 +162,7 @@ def logout():
 def account():
     if 'user' in session:
         user_key = schema.USER_KEY.format(session['user'])
-        account = json.loads(utils.get_user(session['user']))
+        account = utils.get_user(session['user'])
         if request.method == 'GET':
             ctx = {
                 'account': account,
@@ -239,7 +244,7 @@ def delete_role(rolename):
 @admin_required
 def tasks():
     tasks = []
-    for t in g.db.keys('{0}:*'.format(app.config['TASK_QUEUE_NAME'])):
+    for t in g.db.keys(schema.TASK_KEY.format('*')):
         tasks.append(json.loads(g.db.get(t)))
     ctx = {
         'tasks': tasks,
@@ -314,6 +319,47 @@ def nodes():
     return render_template("nodes.html", **ctx)
 
 # ----- API -----
+@app.route("/api/manage/<app_uuid>/deploy", methods=['POST'])
+@api_key_required
+def api_app_deploy(app_uuid=None):
+    try:
+        data = {}
+        pkg_id = app_uuid
+        # check if owner
+        app_config = utils.get_application_config(app_uuid=app_uuid)
+        user = utils.get_user(apikey=session['apikey'])
+        if app_config['owner'] != user['username']:
+            data['error'] = messages.ACCESS_DENIED
+            status = 400
+        else:
+            f = request.files['package']
+            pkg_name = os.path.join(app.config['DEPLOY_WORK_DIR'], pkg_id)
+            f.save(pkg_name)
+            api_log.info('Deploy for {0} requested from {1} ({2})'.format(\
+                app_config['name'], user['username'], request.remote_addr))
+            data['task_id'] = api.deploy_package.delay(app_config['name'], pkg_name).key
+            status = 200
+    except Exception, e:
+        data = {'error': str(e)}
+        status = 400
+    return make_api_response(json.dumps(data), status)
+
+@app.route("/api/task/<task_id>/result")
+@admin_required
+def api_task_result(task_id=None):
+    try:
+        task = g.db.get(schema.TASK_KEY.format(task_id))
+        if task:
+            data = {'result': json.loads(json.loads(task.replace('\n', ''))['result'])}
+        else:
+            data = {'result': messages.INVALID_TASK}
+        print(data['result'])
+        status = 200
+    except Exception, e:
+        data = {'error': str(e)}
+        status = 400
+    return make_api_response(json.dumps(data), status)
+
 @app.route("/api/generateapikey/")
 @login_required
 def api_generate_apikey():
@@ -321,6 +367,9 @@ def api_generate_apikey():
         "key": ''.join(Random().sample(string.letters+string.digits, 32)),
     }
     return jsonify(data)
+
+def make_api_response(data=None, status=200):
+    return Response(data, status=status, mimetype='application/json')
 
 # ----- END API -----
 

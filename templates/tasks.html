@@ -6,6 +6,25 @@
 {% endblock %}
 
 {% block main_content %}
+<div id="modal-task" class="modal large hide">
+  <div class="modal-header">
+    <a href="#" class="close">x</a>
+    <h3>{{_('Result')}}</h3>
+  </div>
+  <div class="modal-body">
+    <fieldset>
+      <div class="clearfix">
+        <div class="input">
+          <textarea id="task-result" class="prettyprint" readonly="true">
+          </textarea>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn secondary" onclick="$('#modal-task').modal('hide');">{{_('Close')}}</a>
+  </div>
+</div>
 <div class="row">
   <div class="fill">
     {% if tasks %}
@@ -20,24 +39,27 @@
       </thead>
       {% for task in tasks|sort(attribute='date', reverse=True) %}
       <tr>
-        <td width="15%">{% if task.date %}{{task.date|date_from_timestamp}}{% endif %}</td>
+        <td width="15%">{% if task.date %}{{task.date|date_ms_from_timestamp}}{% endif %}</td>
         <td>
             <dd>{{task.task}}</dd>
             {% if task.result %}
-            <dd>{{task.result}}</dd>
+            <dd>{{task.result|truncate|replace("\\","")}}</dd>
             {% endif %}
           </dl>
         </td>
         <td width="10%">
           {% if task.status == 'new' %}
-          <span class="label success">New</span>
+          <span class="label success">{{_('New')}}</span>
           {% elif task.status == 'running' %}
-          <span class="label warning">Running</span>
+          <span class="label warning">{{_('Running')}}</span>
           {% else %}
-          <span class="label">Complete</span>
+          <span class="label">{{_('Complete')}}</span>
           {% endif %}
         </td>
-        <td width="10%"><a class="btn" href="#" data-url="{{url_for('delete_task', task_id=task.task_id)}}">Delete</a></td>
+        <td width="20%">
+          <a class="btn task" href="#" rel="popover" data-content="Testing" data-url="{{url_for('api_task_result', task_id=task.task_id)}}">{{_('View')}}</a>
+          <a class="btn delete" href="#" data-url="{{url_for('delete_task', task_id=task.task_id)}}">{{_('Delete')}}</a>
+        </td>
       </tr>
       {% endfor %}
     </table>
@@ -49,7 +71,11 @@
 <script type="text/javascript">
   $(document).ready(function(){
     $("#tasks").tablesorter({ sortList: [[0,1]] });
-    $("#tasks a.btn").click(function() {
+    $("dd[rel=popover]").popover({
+      placement: 'below',
+      html: true
+    });
+    $("#tasks a.btn.delete").click(function() {
       if (confirm('Are you sure you want to delete the task?')) {
         $(location).attr('href', (this).getAttribute('data-url'));
       }
@@ -58,6 +84,13 @@
       if (confirm('Are you sure you want to delete all tasks?')) {
         $(location).attr('href', (this).getAttribute('data-url'));
       }
+    });
+    $("a.btn.task").click(function() {
+      $("#task-result").load((this).getAttribute('data-url'));
+      var mdl = $("#modal-task").modal({
+        keyboard: true
+      });
+      mdl.modal('show');
     });
   });
 </script>

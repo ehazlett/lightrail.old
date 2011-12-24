@@ -4,8 +4,10 @@ from flask import g, session, redirect, url_for, request, current_app
 from flask import flash
 from flask import json
 from flask import jsonify
+import application
 import schema
 import messages
+import utils
 
 def admin_required(f):
     @wraps(f)
@@ -42,8 +44,10 @@ def api_key_required(f):
         if not api_key:
             data = {'error': messages.NO_API_KEY}
             return jsonify(data)
-        if api_key not in current_app.config['API_KEYS']:
+        if api_key not in utils.get_api_keys():
             data = {'error': messages.INVALID_API_KEY}
             return jsonify(data)
+        session['apikey'] = api_key
         return f(*args, **kwargs)
     return decorated
+
