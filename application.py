@@ -31,7 +31,7 @@ from utils.log import RedisHandler
 import queue
 import schema
 import messages
-from decorators import admin_required, login_required, api_key_required
+from decorators import admin_required, login_required, api_key_required, owner_required
 
 app = Flask(__name__)
 app.debug = settings.DEBUG
@@ -101,6 +101,20 @@ def applications():
         'applications': apps,
     }
     return render_template("applications.html", **ctx)
+
+@app.route("/applications/<app_uuid>/")
+@login_required
+@owner_required
+def application(app_uuid=None):
+    try:
+        app = utils.get_application_config(app_uuid=app_uuid)
+        ctx = {
+            'application': app,
+        }
+        return render_template('application.html', **ctx)
+    except Exception, e:
+        flash(e, 'error')
+        return redirect(url_for('applications'))
 
 @app.route("/applications/create/", methods=['GET', 'POST'])
 @login_required

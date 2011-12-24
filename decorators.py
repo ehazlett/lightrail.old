@@ -32,6 +32,18 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
+def owner_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if 'app_uuid' in kwargs:
+            user = utils.get_user(session['user'])
+            app = utils.get_application_config(app_uuid=kwargs['app_uuid'])
+            if app['owner'] != user['username']:
+                flash(messages.ACCESS_DENIED, 'error')
+                return redirect(url_for('applications'))
+        return f(*args, **kwargs)
+    return decorated
+
 def api_key_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):

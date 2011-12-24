@@ -48,7 +48,7 @@
      <tbody>
         {% for app in applications %}
         <tr>
-          <td>{{app.name}}</td>
+          <td><a href="{{url_for('application', app_uuid=app.uuid)}}">{{app.name}}</a></td>
         </tr>
         {% endfor %}
      </tbody>
